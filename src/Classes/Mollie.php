@@ -1,6 +1,7 @@
 <?php
 
 namespace Qubiqx\QcommerceEcommerceMollie\Classes;
+
 namespace Qubiqx\Qcommerce\Classes;
 
 use Exception;
@@ -40,11 +41,11 @@ class Mollie
     {
         $site = Sites::get($siteId);
 
-        if (!Customsetting::get('mollie_connected', $site['id'])) {
+        if (! Customsetting::get('mollie_connected', $site['id'])) {
             return;
         }
 
-        if (!$cache) {
+        if (! $cache) {
             Cache::forget('mollie-payment-methods-' . $site['id']);
         }
 
