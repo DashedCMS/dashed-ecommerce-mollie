@@ -10,6 +10,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
+use Qubiqx\Qcommerce\Classes\Mollie;
 use Qubiqx\QcommerceCore\Classes\Sites;
 use Qubiqx\QcommerceCore\Models\Customsetting;
 use Qubiqx\QcommerceEcommercePaynl\Classes\PayNL;
@@ -28,10 +29,11 @@ class MollieSettingsPage extends Page implements HasForms
         $formData = [];
         $sites = Sites::getSites();
         foreach ($sites as $site) {
-            $formData["paynl_at_hash_{$site['id']}"] = Customsetting::get('paynl_at_hash', $site['id']);
-            $formData["paynl_sl_code_{$site['id']}"] = Customsetting::get('paynl_sl_code', $site['id']);
-            $formData["paynl_test_mode_{$site['id']}"] = Customsetting::get('paynl_test_mode', $site['id'], false) ? true : false;
-            $formData["paynl_connected_{$site['id']}"] = Customsetting::get('paynl_connected', $site['id']);
+            $formData["mollie_partner_id_{$site['id']}"] = Customsetting::get('mollie_partner_id', $site['id']);
+            $formData["mollie_api_key_{$site['id']}"] = Customsetting::get('mollie_api_key', $site['id']);
+            $formData["mollie_test_mode_{$site['id']}"] = Customsetting::get('mollie_test_mode', $site['id'], false) ? true : false;
+            $formData["mollie_connected_{$site['id']}"] = Customsetting::get('mollie_connected', $site['id']);
+            $formData["mollie_connection_error_{$site['id']}"] = Customsetting::get('mollie_connection_error', $site['id']);
         }
 
         $this->form->fill($formData);
@@ -52,7 +54,7 @@ class MollieSettingsPage extends Page implements HasForms
                         'lg' => 2,
                     ]),
                 Placeholder::make('label')
-                    ->label("PayNL is " . (! Customsetting::get('paynl_connected', $site['id'], 0) ? 'niet' : '') . ' geconnect')
+                    ->label("PayNL is " . (!Customsetting::get('paynl_connected', $site['id'], 0) ? 'niet' : '') . ' geconnect')
                     ->content(Customsetting::get('paynl_connection_error', $site['id'], ''))
                     ->columnSpan([
                         'default' => 1,
@@ -91,18 +93,18 @@ class MollieSettingsPage extends Page implements HasForms
         $sites = Sites::getSites();
 
         foreach ($sites as $site) {
-            Customsetting::set('paynl_at_hash', $this->form->getState()["paynl_at_hash_{$site['id']}"], $site['id']);
-            Customsetting::set('paynl_sl_code', $this->form->getState()["paynl_sl_code_{$site['id']}"], $site['id']);
-            Customsetting::set('paynl_test_mode', $this->form->getState()["paynl_test_mode_{$site['id']}"], $site['id']);
-            Customsetting::set('paynl_connected', PayNL::isConnected($site['id']), $site['id']);
+            Customsetting::set('mollie_partner_id', $this->form->getState()["mollie_partner_id_{$site['id']}"], $site['id']);
+            Customsetting::set('mollie_api_key', $this->form->getState()["mollie_api_key_{$site['id']}"], $site['id']);
+            Customsetting::set('mollie_test_mode', $this->form->getState()["mollie_test_mode_{$site['id']}"], $site['id']);
+            Customsetting::set('mollie_connected', Mollie::isConnected($site['id']), $site['id']);
 
-            if (Customsetting::get('paynl_connected', $site['id'])) {
-                PayNL::syncPaymentMethods($site['id']);
+            if (Customsetting::get('mollie_connected', $site['id'])) {
+                Mollie::syncPaymentMethods($site['id']);
             }
         }
 
-        $this->notify('success', 'De PayNL instellingen zijn opgeslagen');
+        $this->notify('success', 'De Mollie instellingen zijn opgeslagen');
 
-        return redirect(PayNLSettingsPage::getUrl());
+        return redirect(MollieSettingsPage::getUrl());
     }
 }
