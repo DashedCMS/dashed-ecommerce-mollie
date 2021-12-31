@@ -13,7 +13,6 @@ use Filament\Pages\Page;
 use Qubiqx\Qcommerce\Classes\Mollie;
 use Qubiqx\QcommerceCore\Classes\Sites;
 use Qubiqx\QcommerceCore\Models\Customsetting;
-use Qubiqx\QcommerceEcommercePaynl\Classes\PayNL;
 
 class MollieSettingsPage extends Page implements HasForms
 {
@@ -54,7 +53,7 @@ class MollieSettingsPage extends Page implements HasForms
                         'lg' => 2,
                     ]),
                 Placeholder::make('label')
-                    ->label("PayNL is " . (!Customsetting::get('paynl_connected', $site['id'], 0) ? 'niet' : '') . ' geconnect')
+                    ->label("PayNL is " . (! Customsetting::get('paynl_connected', $site['id'], 0) ? 'niet' : '') . ' geconnect')
                     ->content(Customsetting::get('paynl_connection_error', $site['id'], ''))
                     ->columnSpan([
                         'default' => 1,
