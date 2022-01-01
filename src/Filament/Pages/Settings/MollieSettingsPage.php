@@ -53,31 +53,23 @@ class MollieSettingsPage extends Page implements HasForms
                         'lg' => 2,
                     ]),
                 Placeholder::make('label')
-                <<<<<<< HEAD
                     ->label("Mollie is " . (!Customsetting::get('mollie_connected', $site['id'], 0) ? 'niet' : '') . ' geconnect')
                     ->content(Customsetting::get('mollie_connection_error', $site['id'], ''))
-=======
-                    ->label("PayNL is " . (! Customsetting::get('paynl_connected', $site['id'], 0) ? 'niet' : '') . ' geconnect')
-                    ->content(Customsetting::get('paynl_connection_error', $site['id'], ''))
->>>>>>> 47c2d637ae109d99eb360f87e7383ac23de5b780
                     ->columnSpan([
                         'default' => 1,
                         'lg' => 2,
                     ]),
-                TextInput::make("mollie_partner_id_{
-                $site['id']}")
+                TextInput::make("mollie_partner_id_{$site['id']}")
                     ->label('Mollie Partner ID')
-                    ->rules([
-                        'max:255',
-                    ]),
-                TextInput::make("mollie_api_key_{
-                $site['id']}")
+                ->rules([
+                    'max:255',
+                ]),
+                TextInput::make("mollie_api_key_{$site['id']}")
                     ->label('Mollie API key')
-                    ->rules([
-                        'max:255',
-                    ]),
-                Toggle::make("mollie_test_mode_{
-                $site['id']}")
+                ->rules([
+                    'max:255',
+                ]),
+                Toggle::make("mollie_test_mode_{$site['id']}")
                     ->label('Testmodus activeren'),
             ];
 
@@ -100,12 +92,9 @@ class MollieSettingsPage extends Page implements HasForms
         $sites = Sites::getSites();
 
         foreach ($sites as $site) {
-            Customsetting::set('mollie_partner_id', $this->form->getState()["mollie_partner_id_{
-                $site['id']}"], $site['id']);
-            Customsetting::set('mollie_api_key', $this->form->getState()["mollie_api_key_{
-                $site['id']}"], $site['id']);
-            Customsetting::set('mollie_test_mode', $this->form->getState()["mollie_test_mode_{
-                $site['id']}"], $site['id']);
+            Customsetting::set('mollie_partner_id', $this->form->getState()["mollie_partner_id_{$site['id']}"], $site['id']);
+            Customsetting::set('mollie_api_key', $this->form->getState()["mollie_api_key_{$site['id']}"], $site['id']);
+            Customsetting::set('mollie_test_mode', $this->form->getState()["mollie_test_mode_{$site['id']}"], $site['id']);
             Customsetting::set('mollie_connected', Mollie::isConnected($site['id']), $site['id']);
 
             if (Customsetting::get('mollie_connected', $site['id'])) {
