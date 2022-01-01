@@ -4,18 +4,20 @@ namespace Qubiqx\QcommerceEcommerceMollie;
 
 use Filament\PluginServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
+use Qubiqx\QcommerceEcommerceMollie\Classes\Mollie;
+use Qubiqx\QcommerceEcommerceMollie\Commands\SyncMolliePaymentMethodsCommand;
 use Qubiqx\QcommerceEcommerceMollie\Filament\Pages\Settings\MollieSettingsPage;
 use Spatie\LaravelPackageTools\Package;
 
 class QcommerceEcommerceMollieServiceProvider extends PluginServiceProvider
 {
-    public static string $name = 'qcommerce-ecommerce-paynl';
+    public static string $name = 'qcommerce-ecommerce-mollie';
 
     public function bootingPackage()
     {
         $this->app->booted(function () {
             $schedule = app(Schedule::class);
-//            $schedule->command(SyncPayNLPaymentMethods::class)->daily();
+            $schedule->command(SyncMolliePaymentMethodsCommand::class)->daily();
         });
     }
 
@@ -38,15 +40,15 @@ class QcommerceEcommerceMollieServiceProvider extends PluginServiceProvider
             array_merge(ecommerce()->builder('paymentServiceProviders'), [
                 'mollie' => [
                     'name' => 'Mollie',
-//                    'class' => PayNL::class,
+                    'class' => Mollie::class,
                 ],
             ])
         );
 
         $package
-            ->name('qcommerce-ecommerce-paynl')
+            ->name('qcommerce-ecommerce-mollie')
             ->hasCommands([
-//                SyncPayNLPaymentMethods::class,
+                SyncMolliePaymentMethodsCommand::class,
             ]);
     }
 

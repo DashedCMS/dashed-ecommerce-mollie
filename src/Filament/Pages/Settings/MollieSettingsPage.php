@@ -10,10 +10,9 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
-use Qubiqx\Qcommerce\Classes\Mollie;
 use Qubiqx\QcommerceCore\Classes\Sites;
 use Qubiqx\QcommerceCore\Models\Customsetting;
-use Qubiqx\QcommerceEcommercePaynl\Classes\PayNL;
+use Qubiqx\QcommerceEcommerceMollie\Classes\Mollie;
 
 class MollieSettingsPage extends Page implements HasForms
 {
@@ -48,29 +47,29 @@ class MollieSettingsPage extends Page implements HasForms
         foreach ($sites as $site) {
             $schema = [
                 Placeholder::make('label')
-                    ->label("PayNL voor {$site['name']}")
+                    ->label("Mollie voor {$site['name']}")
                     ->columnSpan([
                         'default' => 1,
                         'lg' => 2,
                     ]),
                 Placeholder::make('label')
-                    ->label("PayNL is " . (!Customsetting::get('paynl_connected', $site['id'], 0) ? 'niet' : '') . ' geconnect')
-                    ->content(Customsetting::get('paynl_connection_error', $site['id'], ''))
+                    ->label("Mollie is " . (!Customsetting::get('mollie_connected', $site['id'], 0) ? 'niet' : '') . ' geconnect')
+                    ->content(Customsetting::get('mollie_connection_error', $site['id'], ''))
                     ->columnSpan([
                         'default' => 1,
                         'lg' => 2,
                     ]),
-                TextInput::make("paynl_at_hash_{$site['id']}")
-                    ->label('PayNL AT hash')
+                TextInput::make("mollie_partner_id_{$site['id']}")
+                    ->label('Mollie Partner ID')
                     ->rules([
                         'max:255',
                     ]),
-                TextInput::make("paynl_sl_code_{$site['id']}")
-                    ->label('PayNL SL code')
+                TextInput::make("mollie_api_key_{$site['id']}")
+                    ->label('Mollie API key')
                     ->rules([
                         'max:255',
                     ]),
-                Toggle::make("paynl_test_mode_{$site['id']}")
+                Toggle::make("mollie_test_mode_{$site['id']}")
                     ->label('Testmodus activeren'),
             ];
 

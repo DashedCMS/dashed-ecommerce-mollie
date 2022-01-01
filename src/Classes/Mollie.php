@@ -2,14 +2,15 @@
 
 namespace Qubiqx\QcommerceEcommerceMollie\Classes;
 
-namespace Qubiqx\Qcommerce\Classes;
-
 use Exception;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
+use Qubiqx\QcommerceCore\Classes\Locales;
 use Qubiqx\QcommerceCore\Classes\Sites;
 use Qubiqx\QcommerceCore\Models\Customsetting;
 use Qubiqx\QcommerceCore\Models\Translation;
 use Qubiqx\QcommerceEcommerceCore\Models\OrderPayment;
+use Qubiqx\QcommerceEcommerceCore\Models\PaymentMethod;
 
 class Mollie
 {
@@ -29,6 +30,7 @@ class Mollie
                 'webhookUrl' => url('/'),
             ]);
 
+            Customsetting::set('mollie_connection_error', '', $site['id']);
             return true;
         } catch (Exception $e) {
             Customsetting::set('mollie_connection_error', $e->getMessage(), $site['id']);
@@ -37,7 +39,7 @@ class Mollie
         }
     }
 
-    public static function getPaymentMethods($siteId = null, $cache = true)
+    public static function syncPaymentMethods($siteId = null)
     {
         $site = Sites::get($siteId);
 
@@ -45,24 +47,55 @@ class Mollie
             return;
         }
 
-        if (! $cache) {
-            Cache::forget('mollie-payment-methods-' . $site['id']);
-        }
+        config(['mollie.key' => Customsetting::get('mollie_api_key', $site['id'])]);
+        $allPaymentMethods = \Mollie\Laravel\Facades\Mollie::api()->methods()->allActive()->getArrayCopy();
 
-        $result = Cache::remember('mollie-payment-methods-' . $site['id'], 60 * 60 * 24, function () use ($site) {
-            config(['mollie.key' => Customsetting::get('mollie_api_key', $site['id'])]);
+        foreach ($allPaymentMethods as $allPaymentMethod) {
+            if (! PaymentMethod::where('psp', 'mollie')->where('psp_id', $allPaymentMethod->id)->count()) {
+                $image = file_get_contents($allPaymentMethod->image->size2x);
+                $imagePath = '/qcommerce/payment-methods/' . $allPaymentMethod->id . '.png';
+                Storage::put($imagePath, $image);
 
-            $result = \Mollie\Laravel\Facades\Mollie::api()->methods()->allActive()->getArrayCopy();
-            foreach ($result as $paymentMethod) {
-                $paymentMethod->active = Customsetting::get('mollie_payment_method_' . $paymentMethod->id, $site['id'], 0) ? true : false;
-                $paymentMethod->costs = Customsetting::get('mollie_payment_method_costs_' . $paymentMethod->id, $site['id'], 0);
+                $paymentMethod = new PaymentMethod();
+                $paymentMethod->site_id = $site['id'];
+                $paymentMethod->available_from_amount = $allPaymentMethod->minimumAmount->value ?: 0;
+                $paymentMethod->psp = 'mollie';
+                $paymentMethod->psp_id = $allPaymentMethod->id;
+                $paymentMethod->image = $imagePath;
+                foreach (Locales::getLocales() as $locale) {
+                    $paymentMethod->setTranslation('name', $locale['id'], $allPaymentMethod->description);
+                }
+                $paymentMethod->save();
             }
-
-            return $result;
-        });
-
-        return $result;
+        }
     }
+
+//    public static function getPaymentMethods($siteId = null, $cache = true)
+//    {
+//        $site = Sites::get($siteId);
+//
+//        if (! Customsetting::get('mollie_connected', $site['id'])) {
+//            return;
+//        }
+//
+//        if (! $cache) {
+//            Cache::forget('mollie-payment-methods-' . $site['id']);
+//        }
+//
+//        $result = Cache::remember('mollie-payment-methods-' . $site['id'], 60 * 60 * 24, function () use ($site) {
+//            config(['mollie.key' => Customsetting::get('mollie_api_key', $site['id'])]);
+//
+//            $result = \Mollie\Laravel\Facades\Mollie::api()->methods()->allActive()->getArrayCopy();
+//            foreach ($result as $paymentMethod) {
+//                $paymentMethod->active = Customsetting::get('mollie_payment_method_' . $paymentMethod->id, $site['id'], 0) ? true : false;
+//                $paymentMethod->costs = Customsetting::get('mollie_payment_method_costs_' . $paymentMethod->id, $site['id'], 0);
+//            }
+//
+//            return $result;
+//        });
+//
+//        return $result;
+//    }
 
     public static function startTransaction(OrderPayment $orderPayment)
     {
