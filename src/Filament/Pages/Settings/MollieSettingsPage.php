@@ -53,7 +53,7 @@ class MollieSettingsPage extends Page implements HasForms
                         'lg' => 2,
                     ]),
                 Placeholder::make('label')
-                    ->label("Mollie is " . (!Customsetting::get('mollie_connected', $site['id'], 0) ? 'niet' : '') . ' geconnect')
+                    ->label("Mollie is " . (! Customsetting::get('mollie_connected', $site['id'], 0) ? 'niet' : '') . ' geconnect')
                     ->content(Customsetting::get('mollie_connection_error', $site['id'], ''))
                     ->columnSpan([
                         'default' => 1,
