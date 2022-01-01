@@ -4,7 +4,6 @@ namespace Qubiqx\QcommerceEcommerceMollie\Commands;
 
 use Illuminate\Console\Command;
 use Qubiqx\QcommerceEcommerceMollie\Classes\Mollie;
-use Qubiqx\QcommerceEcommercePaynl\Classes\PayNL;
 
 class SyncMolliePaymentMethodsCommand extends Command
 {

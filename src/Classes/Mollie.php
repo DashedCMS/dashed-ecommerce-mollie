@@ -31,6 +31,7 @@ class Mollie
             ]);
 
             Customsetting::set('mollie_connection_error', '', $site['id']);
+
             return true;
         } catch (Exception $e) {
             Customsetting::set('mollie_connection_error', $e->getMessage(), $site['id']);
