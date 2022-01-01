@@ -3,7 +3,6 @@
 namespace Qubiqx\QcommerceEcommerceMollie\Classes;
 
 use Exception;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Qubiqx\QcommerceCore\Classes\Locales;
 use Qubiqx\QcommerceCore\Classes\Sites;
