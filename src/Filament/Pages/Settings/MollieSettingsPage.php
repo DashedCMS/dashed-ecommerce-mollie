@@ -12,7 +12,10 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
 use Qubiqx\QcommerceCore\Classes\Sites;
 use Qubiqx\QcommerceCore\Models\Customsetting;
+<<<<<<< HEAD
 use Qubiqx\QcommerceEcommerceMollie\Classes\Mollie;
+=======
+>>>>>>> 47c2d637ae109d99eb360f87e7383ac23de5b780
 
 class MollieSettingsPage extends Page implements HasForms
 {
@@ -53,8 +56,13 @@ class MollieSettingsPage extends Page implements HasForms
                         'lg' => 2,
                     ]),
                 Placeholder::make('label')
+<<<<<<< HEAD
                     ->label("Mollie is " . (!Customsetting::get('mollie_connected', $site['id'], 0) ? 'niet' : '') . ' geconnect')
                     ->content(Customsetting::get('mollie_connection_error', $site['id'], ''))
+=======
+                    ->label("PayNL is " . (! Customsetting::get('paynl_connected', $site['id'], 0) ? 'niet' : '') . ' geconnect')
+                    ->content(Customsetting::get('paynl_connection_error', $site['id'], ''))
+>>>>>>> 47c2d637ae109d99eb360f87e7383ac23de5b780
                     ->columnSpan([
                         'default' => 1,
                         'lg' => 2,
