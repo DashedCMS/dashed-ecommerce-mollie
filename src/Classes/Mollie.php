@@ -86,7 +86,7 @@ class Mollie
             ]),
             'redirectUrl' => route('qcommerce.frontend.checkout.complete') . '?orderId=' . $orderPayment->order->hash . '&paymentId=' . $orderPayment->hash,
             'webhookUrl' => route('qcommerce.frontend.checkout.exchange'),
-            'method' => $orderPayment->paymentMethod->psp_id,
+            'method' => $orderPayment->paymentMethod ? $orderPayment->paymentMethod->psp_id : null,
             'metadata' => [
                 'order_id' => Translation::get('payment-description', 'payments', 'Order #:orderId:', 'text', [
                     'orderId' => $orderPayment->order->id,
