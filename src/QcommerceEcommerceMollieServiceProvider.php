@@ -3,11 +3,11 @@
 namespace Qubiqx\QcommerceEcommerceMollie;
 
 use Filament\PluginServiceProvider;
-use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
 use Qubiqx\QcommerceEcommerceMollie\Classes\Mollie;
 use Qubiqx\QcommerceEcommerceMollie\Commands\SyncMolliePaymentMethodsCommand;
 use Qubiqx\QcommerceEcommerceMollie\Filament\Pages\Settings\MollieSettingsPage;
+use Spatie\LaravelPackageTools\Package;
 
 class QcommerceEcommerceMollieServiceProvider extends PluginServiceProvider
 {

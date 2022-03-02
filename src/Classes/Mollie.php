@@ -4,12 +4,12 @@ namespace Qubiqx\QcommerceEcommerceMollie\Classes;
 
 use Exception;
 use Illuminate\Support\Facades\Storage;
-use Qubiqx\QcommerceCore\Classes\Sites;
 use Qubiqx\QcommerceCore\Classes\Locales;
+use Qubiqx\QcommerceCore\Classes\Sites;
 use Qubiqx\QcommerceCore\Models\Customsetting;
-use Qubiqx\QcommerceTranslations\Models\Translation;
 use Qubiqx\QcommerceEcommerceCore\Models\OrderPayment;
 use Qubiqx\QcommerceEcommerceCore\Models\PaymentMethod;
+use Qubiqx\QcommerceTranslations\Models\Translation;
 
 class Mollie
 {
