@@ -53,7 +53,7 @@ class Mollie
         foreach ($allPaymentMethods as $allPaymentMethod) {
             if (! PaymentMethod::where('psp', 'mollie')->where('psp_id', $allPaymentMethod->id)->count()) {
                 $image = file_get_contents($allPaymentMethod->image->size2x);
-                $imagePath = '/qcommerce/payment-methods/' . $allPaymentMethod->id . '.png';
+                $imagePath = '/qcommerce/payment-methods/mollie/' . $allPaymentMethod->id . '.png';
                 Storage::put($imagePath, $image);
 
                 $paymentMethod = new PaymentMethod();
