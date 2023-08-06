@@ -1,15 +1,15 @@
 <?php
 
-namespace Qubiqx\QcommerceEcommerceMollie\Classes;
+namespace Dashed\DashedEcommerceMollie\Classes;
 
 use Exception;
 use Illuminate\Support\Facades\Storage;
-use Qubiqx\QcommerceCore\Classes\Locales;
-use Qubiqx\QcommerceCore\Classes\Sites;
-use Qubiqx\QcommerceCore\Models\Customsetting;
-use Qubiqx\QcommerceEcommerceCore\Models\OrderPayment;
-use Qubiqx\QcommerceEcommerceCore\Models\PaymentMethod;
-use Qubiqx\QcommerceTranslations\Models\Translation;
+use Dashed\DashedCore\Classes\Locales;
+use Dashed\DashedCore\Classes\Sites;
+use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedEcommerceCore\Models\OrderPayment;
+use Dashed\DashedEcommerceCore\Models\PaymentMethod;
+use Dashed\DashedTranslations\Models\Translation;
 
 class Mollie
 {
@@ -53,7 +53,7 @@ class Mollie
         foreach ($allPaymentMethods as $allPaymentMethod) {
             if (! PaymentMethod::where('psp', 'mollie')->where('psp_id', $allPaymentMethod->id)->count()) {
                 $image = file_get_contents($allPaymentMethod->image->size2x);
-                $imagePath = '/qcommerce/payment-methods/mollie/' . $allPaymentMethod->id . '.png';
+                $imagePath = '/dashed/payment-methods/mollie/' . $allPaymentMethod->id . '.png';
                 Storage::put($imagePath, $image);
 
                 $paymentMethod = new PaymentMethod();
@@ -84,8 +84,8 @@ class Mollie
             'description' => Translation::get('payment-description', 'payments', 'Order #:orderId:', 'text', [
                 'orderId' => $orderPayment->order->id,
             ]),
-            'redirectUrl' => route('qcommerce.frontend.checkout.complete') . '?orderId=' . $orderPayment->order->hash . '&paymentId=' . $orderPayment->hash,
-            'webhookUrl' => route('qcommerce.frontend.checkout.exchange'),
+            'redirectUrl' => route('dashed.frontend.checkout.complete') . '?orderId=' . $orderPayment->order->hash . '&paymentId=' . $orderPayment->hash,
+            'webhookUrl' => route('dashed.frontend.checkout.exchange'),
             'method' => $orderPayment->paymentMethod ? $orderPayment->paymentMethod->psp_id : null,
             'metadata' => [
                 'order_id' => Translation::get('payment-description', 'payments', 'Order #:orderId:', 'text', [

@@ -1,17 +1,17 @@
 <?php
 
-namespace Qubiqx\QcommerceEcommerceMollie;
+namespace Dashed\DashedEcommerceMollie;
 
 use Filament\PluginServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
-use Qubiqx\QcommerceEcommerceMollie\Classes\Mollie;
-use Qubiqx\QcommerceEcommerceMollie\Commands\SyncMolliePaymentMethodsCommand;
-use Qubiqx\QcommerceEcommerceMollie\Filament\Pages\Settings\MollieSettingsPage;
+use Dashed\DashedEcommerceMollie\Classes\Mollie;
+use Dashed\DashedEcommerceMollie\Commands\SyncMolliePaymentMethodsCommand;
+use Dashed\DashedEcommerceMollie\Filament\Pages\Settings\MollieSettingsPage;
 use Spatie\LaravelPackageTools\Package;
 
-class QcommerceEcommerceMollieServiceProvider extends PluginServiceProvider
+class DashedEcommerceMollieServiceProvider extends PluginServiceProvider
 {
-    public static string $name = 'qcommerce-ecommerce-mollie';
+    public static string $name = 'dashed-ecommerce-mollie';
 
     public function bootingPackage()
     {
@@ -46,7 +46,7 @@ class QcommerceEcommerceMollieServiceProvider extends PluginServiceProvider
         );
 
         $package
-            ->name('qcommerce-ecommerce-mollie')
+            ->name('dashed-ecommerce-mollie')
             ->hasCommands([
                 SyncMolliePaymentMethodsCommand::class,
             ]);

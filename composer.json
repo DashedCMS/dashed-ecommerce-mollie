@@ -1,17 +1,17 @@
 {
-    "name": "qubiqx/qcommerce-ecommerce-mollie",
-    "description": "This is my package qcommerce-ecommerce-mollie",
+    "name": "dashed/dashed-ecommerce-mollie",
+    "description": "This is my package dashed-ecommerce-mollie",
     "keywords": [
-        "Qubiqx",
+        "Dashed",
         "laravel",
-        "qcommerce-ecommerce-mollie"
+        "dashed-ecommerce-mollie"
     ],
-    "homepage": "https://github.com/qubiqx/qcommerce-ecommerce-mollie",
+    "homepage": "https://github.com/Dashed-DEV/dashed-ecommerce-mollie",
     "license": "MIT",
     "authors": [
         {
             "name": "Robin van Maasakker",
-            "email": "robin@qubiqx.com",
+            "email": "robin@dashed.nl",
             "role": "Developer"
         }
     ],
@@ -30,13 +30,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Qubiqx\\QcommerceEcommerceMollie\\": "src",
-            "Qubiqx\\QcommerceEcommerceMollie\\Database\\Factories\\": "database/factories"
+            "Dashed\\DashedEcommerceMollie\\": "src",
+            "Dashed\\DashedEcommerceMollie\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Qubiqx\\QcommerceEcommerceMollie\\Tests\\": "tests"
+            "Dashed\\DashedEcommerceMollie\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -53,10 +53,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Qubiqx\\QcommerceEcommerceMollie\\QcommerceEcommerceMollieServiceProvider"
+                "Dashed\\DashedEcommerceMollie\\DashedEcommerceMollieServiceProvider"
             ],
             "aliases": {
-                "QcommerceEcommerceMollie": "Qubiqx\\QcommerceEcommerceMollie\\Facades\\QcommerceEcommerceMollie"
+                "DashedEcommerceMollie": "Dashed\\DashedEcommerceMollie\\Facades\\DashedEcommerceMollie"
             }
         }
     },

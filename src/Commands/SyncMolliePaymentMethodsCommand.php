@@ -1,9 +1,9 @@
 <?php
 
-namespace Qubiqx\QcommerceEcommerceMollie\Commands;
+namespace Dashed\DashedEcommerceMollie\Commands;
 
 use Illuminate\Console\Command;
-use Qubiqx\QcommerceEcommerceMollie\Classes\Mollie;
+use Dashed\DashedEcommerceMollie\Classes\Mollie;
 
 class SyncMolliePaymentMethodsCommand extends Command
 {
@@ -12,7 +12,7 @@ class SyncMolliePaymentMethodsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'qcommerce:sync-mollie-payment-methods';
+    protected $signature = 'dashed:sync-mollie-payment-methods';
 
     /**
      * The console command description.
