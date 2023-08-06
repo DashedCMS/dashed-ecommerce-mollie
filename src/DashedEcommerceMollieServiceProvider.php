@@ -2,11 +2,11 @@
 
 namespace Dashed\DashedEcommerceMollie;
 
-use Filament\PluginServiceProvider;
-use Illuminate\Console\Scheduling\Schedule;
 use Dashed\DashedEcommerceMollie\Classes\Mollie;
 use Dashed\DashedEcommerceMollie\Commands\SyncMolliePaymentMethodsCommand;
 use Dashed\DashedEcommerceMollie\Filament\Pages\Settings\MollieSettingsPage;
+use Filament\PluginServiceProvider;
+use Illuminate\Console\Scheduling\Schedule;
 use Spatie\LaravelPackageTools\Package;
 
 class DashedEcommerceMollieServiceProvider extends PluginServiceProvider
