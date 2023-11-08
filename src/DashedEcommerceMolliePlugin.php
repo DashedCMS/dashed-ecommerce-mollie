@@ -2,9 +2,9 @@
 
 namespace Dashed\DashedEcommerceMollie;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
 use Dashed\DashedEcommerceMollie\Filament\Pages\Settings\MollieSettingsPage;
+use Filament\Contracts\Plugin;
+use Filament\Panel;
 
 class DashedEcommerceMolliePlugin implements Plugin
 {
