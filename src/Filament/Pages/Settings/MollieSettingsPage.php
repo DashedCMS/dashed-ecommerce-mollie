@@ -2,26 +2,24 @@
 
 namespace Dashed\DashedEcommerceMollie\Filament\Pages\Settings;
 
-use Dashed\DashedCore\Classes\Sites;
-use Dashed\DashedCore\Models\Customsetting;
-use Dashed\DashedEcommerceMollie\Classes\Mollie;
-use Filament\Forms\Components\Placeholder;
+use Filament\Pages\Page;
 use Filament\Forms\Components\Tabs;
+use Dashed\DashedCore\Classes\Sites;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Pages\Page;
+use Filament\Notifications\Notification;
+use Filament\Forms\Components\Placeholder;
+use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedEcommerceMollie\Classes\Mollie;
 
-class MollieSettingsPage extends Page implements HasForms
+class MollieSettingsPage extends Page
 {
-    use InteractsWithForms;
-
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $title = 'Mollie';
 
     protected static string $view = 'dashed-core::settings.pages.default-settings';
+    public array $data = [];
 
     public function mount(): void
     {
@@ -61,14 +59,10 @@ class MollieSettingsPage extends Page implements HasForms
                     ]),
                 TextInput::make("mollie_partner_id_{$site['id']}")
                     ->label('Mollie Partner ID')
-                ->rules([
-                    'max:255',
-                ]),
+                    ->maxLength(255),
                 TextInput::make("mollie_api_key_{$site['id']}")
                     ->label('Mollie API key')
-                ->rules([
-                    'max:255',
-                ]),
+                    ->maxLength(255),
                 Toggle::make("mollie_test_mode_{$site['id']}")
                     ->label('Testmodus activeren'),
             ];
@@ -87,6 +81,11 @@ class MollieSettingsPage extends Page implements HasForms
         return $tabGroups;
     }
 
+    public function getFormStatePath(): ?string
+    {
+        return 'data';
+    }
+
     public function submit()
     {
         $sites = Sites::getSites();
@@ -102,7 +101,10 @@ class MollieSettingsPage extends Page implements HasForms
             }
         }
 
-        $this->notify('success', 'De Mollie instellingen zijn opgeslagen');
+        Notification::make()
+            ->title('De Mollie instellingen zijn opgeslagen')
+            ->success()
+            ->send();
 
         return redirect(MollieSettingsPage::getUrl());
     }

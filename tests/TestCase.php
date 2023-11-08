@@ -2,9 +2,9 @@
 
 namespace Dashed\DashedEcommerceMollie\Tests;
 
-use Dashed\DashedEcommerceMollie\DashedEcommerceMollieServiceProvider;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Dashed\DashedEcommerceMollie\DashedEcommerceMollieServiceProvider;
 
 class TestCase extends Orchestra
 {
