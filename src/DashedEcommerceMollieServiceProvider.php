@@ -2,14 +2,14 @@
 
 namespace Dashed\DashedEcommerceMollie;
 
+use Spatie\LaravelPackageTools\Package;
+use Illuminate\Console\Scheduling\Schedule;
 use Dashed\DashedEcommerceMollie\Classes\Mollie;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Dashed\DashedEcommerceMollie\Commands\SyncMolliePaymentMethodsCommand;
 use Dashed\DashedEcommerceMollie\Filament\Pages\Settings\MollieSettingsPage;
-use Filament\PluginServiceProvider;
-use Illuminate\Console\Scheduling\Schedule;
-use Spatie\LaravelPackageTools\Package;
 
-class DashedEcommerceMollieServiceProvider extends PluginServiceProvider
+class DashedEcommerceMollieServiceProvider extends PackageServiceProvider
 {
     public static string $name = 'dashed-ecommerce-mollie';
 
@@ -29,7 +29,7 @@ class DashedEcommerceMollieServiceProvider extends PluginServiceProvider
                 'mollie' => [
                     'name' => 'Mollie',
                     'description' => 'Link Mollie aan je webshop',
-                    'icon' => 'cash',
+                    'icon' => 'banknotes',
                     'page' => MollieSettingsPage::class,
                 ],
             ])
@@ -50,12 +50,5 @@ class DashedEcommerceMollieServiceProvider extends PluginServiceProvider
             ->hasCommands([
                 SyncMolliePaymentMethodsCommand::class,
             ]);
-    }
-
-    protected function getPages(): array
-    {
-        return array_merge(parent::getPages(), [
-            MollieSettingsPage::class,
-        ]);
     }
 }
