@@ -8,10 +8,16 @@ use Dashed\DashedCore\Classes\Sites;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
+<<<<<<< HEAD
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\Placeholder;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedEcommerceMollie\Classes\Mollie;
+=======
+use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+>>>>>>> filamentv3
 
 class MollieSettingsPage extends Page
 {
