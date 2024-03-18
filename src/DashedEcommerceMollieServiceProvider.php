@@ -8,12 +8,6 @@ use Dashed\DashedEcommerceMollie\Classes\Mollie;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Dashed\DashedEcommerceMollie\Commands\SyncMolliePaymentMethodsCommand;
 use Dashed\DashedEcommerceMollie\Filament\Pages\Settings\MollieSettingsPage;
-<<<<<<< HEAD
-=======
-use Illuminate\Console\Scheduling\Schedule;
-use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
->>>>>>> filamentv3
 
 class DashedEcommerceMollieServiceProvider extends PackageServiceProvider
 {
