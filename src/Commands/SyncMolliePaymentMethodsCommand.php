@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedEcommerceMollie\Commands;
 
-use Illuminate\Console\Command;
 use Dashed\DashedEcommerceMollie\Classes\Mollie;
+use Illuminate\Console\Command;
 
 class SyncMolliePaymentMethodsCommand extends Command
 {
