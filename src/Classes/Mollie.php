@@ -45,7 +45,7 @@ class Mollie
     {
         $site = Sites::get($siteId);
 
-        if (!Customsetting::get('mollie_connected', $site['id'])) {
+        if (! Customsetting::get('mollie_connected', $site['id'])) {
             return;
         }
 
@@ -53,13 +53,13 @@ class Mollie
         $allPaymentMethods = \Mollie\Laravel\Facades\Mollie::api()->methods()->allActive()->getArrayCopy();
 
         foreach ($allPaymentMethods as $allPaymentMethod) {
-            if (!PaymentMethod::where('psp', 'mollie')->where('psp_id', $allPaymentMethod->id)->count()) {
+            if (! PaymentMethod::where('psp', 'mollie')->where('psp_id', $allPaymentMethod->id)->count()) {
                 $image = file_get_contents($allPaymentMethod->image->size2x);
                 $imagePath = '/dashed/payment-methods/mollie/' . $allPaymentMethod->id . '.png';
                 Storage::disk('dashed')->put($imagePath, $image);
 
                 $folder = MediaLibraryFolder::where('name', 'mollie')->first();
-                if (!$folder) {
+                if (! $folder) {
                     $folder->name = 'mollie';
                     $folder->save();
                 }
