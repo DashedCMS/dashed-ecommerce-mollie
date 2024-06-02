@@ -10,6 +10,8 @@ use Dashed\DashedEcommerceCore\Models\PaymentMethod;
 use Dashed\DashedTranslations\Models\Translation;
 use Exception;
 use Illuminate\Support\Facades\Storage;
+use RalphJSmit\Filament\MediaLibrary\Media\Models\MediaLibraryFolder;
+use RalphJSmit\Filament\MediaLibrary\Media\Models\MediaLibraryItem;
 
 class Mollie
 {
@@ -43,7 +45,7 @@ class Mollie
     {
         $site = Sites::get($siteId);
 
-        if (! Customsetting::get('mollie_connected', $site['id'])) {
+        if (!Customsetting::get('mollie_connected', $site['id'])) {
             return;
         }
 
@@ -51,17 +53,31 @@ class Mollie
         $allPaymentMethods = \Mollie\Laravel\Facades\Mollie::api()->methods()->allActive()->getArrayCopy();
 
         foreach ($allPaymentMethods as $allPaymentMethod) {
-            if (! PaymentMethod::where('psp', 'mollie')->where('psp_id', $allPaymentMethod->id)->count()) {
+            if (!PaymentMethod::where('psp', 'mollie')->where('psp_id', $allPaymentMethod->id)->count()) {
                 $image = file_get_contents($allPaymentMethod->image->size2x);
                 $imagePath = '/dashed/payment-methods/mollie/' . $allPaymentMethod->id . '.png';
-                Storage::put($imagePath, $image);
+                Storage::disk('dashed')->put($imagePath, $image);
+
+                $folder = MediaLibraryFolder::where('name', 'mollie')->first();
+                if (!$folder) {
+                    $folder->name = 'mollie';
+                    $folder->save();
+                }
+                $filamentMediaLibraryItem = new MediaLibraryItem();
+                $filamentMediaLibraryItem->uploaded_by_user_id = null;
+                $filamentMediaLibraryItem->folder_id = $folder->id;
+                $filamentMediaLibraryItem->save();
+
+                $filamentMediaLibraryItem
+                    ->addMediaFromDisk($imagePath, 'dashed')
+                    ->toMediaCollection($filamentMediaLibraryItem->getMediaLibraryCollectionName());
 
                 $paymentMethod = new PaymentMethod();
                 $paymentMethod->site_id = $site['id'];
                 $paymentMethod->available_from_amount = $allPaymentMethod->minimumAmount->value ?: 0;
                 $paymentMethod->psp = 'mollie';
                 $paymentMethod->psp_id = $allPaymentMethod->id;
-                $paymentMethod->image = $imagePath;
+                $paymentMethod->image = $filamentMediaLibraryItem->id;
                 foreach (Locales::getLocales() as $locale) {
                     $paymentMethod->setTranslation('name', $locale['id'], $allPaymentMethod->description);
                 }
