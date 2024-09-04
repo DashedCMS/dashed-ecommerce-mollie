@@ -18,7 +18,7 @@
     "require": {
         "php": "^8.3",
         "spatie/laravel-package-tools": "^1.16",
-        "mollie/laravel-mollie": "^2.25"
+        "mollie/laravel-mollie": "^3.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.63",
