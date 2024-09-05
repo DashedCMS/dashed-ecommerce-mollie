@@ -50,7 +50,7 @@ class Mollie
         }
 
         config(['mollie.key' => Customsetting::get('mollie_api_key', $site['id'])]);
-        $allPaymentMethods = \Mollie\Laravel\Facades\Mollie::api()->methods()->allActive()->getArrayCopy();
+        $allPaymentMethods = \Mollie\Laravel\Facades\Mollie::api()->methods->allActive()->getArrayCopy();
 
         foreach ($allPaymentMethods as $allPaymentMethod) {
             if (! PaymentMethod::where('psp', 'mollie')->where('psp_id', $allPaymentMethod->id)->count()) {
