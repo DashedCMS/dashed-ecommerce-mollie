@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedEcommerceMollie\Classes;
 
+use Dashed\DashedEcommerceCore\Classes\ShoppingCart;
 use Exception;
 use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedCore\Classes\Locales;
@@ -100,7 +101,7 @@ class Mollie
             'description' => Translation::get('payment-description', 'payments', 'Order #:orderId:', 'text', [
                 'orderId' => $orderPayment->order->id,
             ]),
-            'redirectUrl' => route('dashed.frontend.checkout.complete') . '?orderId=' . $orderPayment->order->hash . '&paymentId=' . $orderPayment->hash,
+            'redirectUrl' => url(ShoppingCart::getCompleteUrl()) . '?orderId=' . $orderPayment->order->hash . '&paymentId=' . $orderPayment->hash,
             'webhookUrl' => route('dashed.frontend.checkout.exchange'),
             'method' => $orderPayment->paymentMethod ? $orderPayment->paymentMethod->psp_id : null,
             'metadata' => [
