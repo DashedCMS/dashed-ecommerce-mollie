@@ -2,7 +2,6 @@
 
 namespace Dashed\DashedEcommerceMollie\Classes;
 
-use Dashed\DashedEcommerceCore\Classes\ShoppingCart;
 use Exception;
 use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedCore\Classes\Locales;
@@ -10,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedEcommerceCore\Models\OrderPayment;
+use Dashed\DashedEcommerceCore\Classes\ShoppingCart;
 use Dashed\DashedEcommerceCore\Models\PaymentMethod;
 use RalphJSmit\Filament\MediaLibrary\Media\Models\MediaLibraryItem;
 use RalphJSmit\Filament\MediaLibrary\Media\Models\MediaLibraryFolder;
