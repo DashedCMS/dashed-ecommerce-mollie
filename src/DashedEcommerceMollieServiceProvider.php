@@ -23,17 +23,7 @@ class DashedEcommerceMollieServiceProvider extends PackageServiceProvider
 
     public function configurePackage(Package $package): void
     {
-        cms()->builder(
-            'settingPages',
-            array_merge(cms()->builder('settingPages'), [
-                'mollie' => [
-                    'name' => 'Mollie',
-                    'description' => 'Link Mollie aan je webshop',
-                    'icon' => 'banknotes',
-                    'page' => MollieSettingsPage::class,
-                ],
-            ])
-        );
+        cms()->registerSettingsPage(MollieSettingsPage::class, 'Mollie', 'banknotes', 'Link Mollie aan je webshop');
 
         ecommerce()->builder(
             'paymentServiceProviders',
