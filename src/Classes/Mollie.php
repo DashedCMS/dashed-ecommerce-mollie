@@ -11,8 +11,8 @@ use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedEcommerceCore\Models\OrderPayment;
 use Dashed\DashedEcommerceCore\Classes\ShoppingCart;
 use Dashed\DashedEcommerceCore\Models\PaymentMethod;
-use RalphJSmit\Filament\MediaLibrary\Media\Models\MediaLibraryItem;
-use RalphJSmit\Filament\MediaLibrary\Media\Models\MediaLibraryFolder;
+use RalphJSmit\Filament\MediaLibrary\Models\MediaLibraryItem;
+use RalphJSmit\Filament\MediaLibrary\Models\MediaLibraryFolder;
 
 class Mollie
 {
