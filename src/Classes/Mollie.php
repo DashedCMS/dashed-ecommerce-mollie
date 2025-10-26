@@ -61,6 +61,7 @@ class Mollie
 
                 $folder = MediaLibraryFolder::where('name', 'mollie')->first();
                 if (! $folder) {
+                    $folder = new MediaLibraryFolder();
                     $folder->name = 'mollie';
                     $folder->save();
                 }
