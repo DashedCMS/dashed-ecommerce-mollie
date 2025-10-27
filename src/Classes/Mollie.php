@@ -103,6 +103,7 @@ class Mollie
                 'orderId' => $orderPayment->order->id,
             ]),
             'redirectUrl' => url(ShoppingCart::getCompleteUrl()) . '?orderId=' . $orderPayment->order->hash . '&paymentId=' . $orderPayment->hash,
+            'cancelUrl' => url(ShoppingCart::getCheckoutUrl()),
             'webhookUrl' => route('dashed.frontend.checkout.exchange'),
             'method' => $orderPayment->paymentMethod ? $orderPayment->paymentMethod->psp_id : null,
             'metadata' => [
