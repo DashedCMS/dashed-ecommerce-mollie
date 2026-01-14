@@ -135,4 +135,12 @@ class Mollie
             return 'pending';
         }
     }
+
+    public static function getPayment(OrderPayment $orderPayment)
+    {
+        config(['mollie.key' => Customsetting::get('mollie_api_key')]);
+        $payment = \Mollie\Laravel\Facades\Mollie::api()->payments->get($orderPayment->psp_id);
+
+        return $payment;
+    }
 }
