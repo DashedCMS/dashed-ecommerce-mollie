@@ -131,6 +131,8 @@ class Mollie
             return 'paid';
         } elseif ($payment->isCanceled()) {
             return 'cancelled';
+        } elseif ($payment->isFailed()) {
+            return 'failed';
         } else {
             return 'pending';
         }
