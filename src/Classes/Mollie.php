@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedEcommerceMollie\Classes;
 
+use Dashed\DashedEcommerceCore\Classes\Countries;
 use Exception;
 use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedCore\Classes\Locales;
@@ -106,6 +107,12 @@ class Mollie
             'cancelUrl' => url(ShoppingCart::getCheckoutUrl()),
             'webhookUrl' => route('dashed.frontend.checkout.exchange'),
             'method' => $orderPayment->paymentMethod ? $orderPayment->paymentMethod->psp_id : null,
+            'billingAddress' => [
+                'streetAndNumber' => trim(($orderPayment->order->invoice_street ?: $orderPayment->order->street) . ' ' . ($orderPayment->order->invoice_house_nr ?: $orderPayment->order->house_nr)),
+                'postalCode' => $orderPayment->order->invoice_zip_code ?: $orderPayment->order->zip_code,
+                'city' => $orderPayment->order->invoice_city ?: $orderPayment->order->city,
+                'country' => Countries::getCountryIsoCode($orderPayment->order->invoice_country ?: $orderPayment->order->country),
+            ],
             'metadata' => [
                 'order_id' => Translation::get('payment-description', 'payments', 'Order #:orderId:', 'text', [
                     'orderId' => $orderPayment->order->id,
