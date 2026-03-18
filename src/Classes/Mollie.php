@@ -95,7 +95,20 @@ class Mollie
         $orderPayment->save();
 
         config(['mollie.key' => Customsetting::get('mollie_api_key')]);
-        $payment = \Mollie\Laravel\Facades\Mollie::api()->payments->create([
+        $payment = \Mollie\Laravel\Facades\Mollie::api()->payments->create(self::getPaymentData($orderPayment));
+
+        $orderPayment->psp_id = $payment->id;
+        $orderPayment->save();
+
+        return [
+            'transaction' => $payment,
+            'redirectUrl' => $payment->getCheckoutUrl(),
+        ];
+    }
+
+    public static function getPaymentData(OrderPayment $orderPayment): array
+    {
+        return [
             'amount' => [
                 'currency' => 'EUR',
                 'value' => number_format($orderPayment->amount, 2, '.', ''),
@@ -118,14 +131,6 @@ class Mollie
                     'orderId' => $orderPayment->order->id,
                 ]),
             ],
-        ]);
-
-        $orderPayment->psp_id = $payment->id;
-        $orderPayment->save();
-
-        return [
-            'transaction' => $payment,
-            'redirectUrl' => $payment->getCheckoutUrl(),
         ];
     }
 
