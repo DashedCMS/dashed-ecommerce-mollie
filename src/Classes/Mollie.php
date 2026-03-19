@@ -125,6 +125,9 @@ class Mollie
                 'postalCode' => $orderPayment->order->invoice_zip_code ?: $orderPayment->order->zip_code,
                 'city' => $orderPayment->order->invoice_city ?: $orderPayment->order->city,
                 'country' => Countries::getCountryIsoCode($orderPayment->order->invoice_country ?: $orderPayment->order->country),
+                'givenName' => $orderPayment->order->first_name,
+                'familyName' => $orderPayment->order->last_name,
+                'email' => $orderPayment->order->email,
             ],
             'metadata' => [
                 'order_id' => Translation::get('payment-description', 'payments', 'Order #:orderId:', 'text', [
