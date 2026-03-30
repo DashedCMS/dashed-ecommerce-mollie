@@ -190,7 +190,13 @@ class Mollie
     {
         $order = $orderPayment->order;
 
-        $billingAddress = [
+        $email = $order->email;
+
+        if (! filled($email)) {
+            return null;
+        }
+
+        $fullBillingAddress = [
             'streetAndNumber' => trim(
                 ($order->invoice_street ?: $order->street) . ' ' .
                 ($order->invoice_house_nr ?: $order->house_nr)
@@ -200,15 +206,19 @@ class Mollie
             'country' => Countries::getCountryIsoCode($order->invoice_country ?: $order->country),
             'givenName' => $order->first_name,
             'familyName' => $order->last_name,
-            'email' => $order->email,
         ];
 
-        foreach ($billingAddress as $value) {
-            if (! filled($value)) {
-                return null;
-            }
+        $isComplete = collect($fullBillingAddress)->every(fn ($value) => filled($value));
+
+        if ($isComplete) {
+            return [
+                ...$fullBillingAddress,
+                'email' => $email,
+            ];
         }
 
-        return $billingAddress;
+        return [
+            'email' => $email,
+        ];
     }
 }
