@@ -12,6 +12,7 @@ use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedEcommerceCore\Models\OrderPayment;
 use Dashed\DashedEcommerceCore\Classes\ShoppingCart;
 use Dashed\DashedEcommerceCore\Models\PaymentMethod;
+use Dashed\DashedEcommerceCore\Classes\PaymentMethods;
 use RalphJSmit\Filament\MediaLibrary\Models\MediaLibraryItem;
 use RalphJSmit\Filament\MediaLibrary\Models\MediaLibraryFolder;
 
@@ -93,12 +94,15 @@ class Mollie
             $paymentMethod->psp = 'mollie';
             $paymentMethod->psp_id = $allPaymentMethod->id;
             $paymentMethod->image = $filamentMediaLibraryItem->id;
+            $paymentMethod->active = false;
 
             foreach (Locales::getLocales() as $locale) {
                 $paymentMethod->setTranslation('name', $locale['id'], $allPaymentMethod->description);
             }
 
             $paymentMethod->save();
+
+            PaymentMethods::notifyAdminsOfNewPaymentMethod($paymentMethod);
         }
     }
 
