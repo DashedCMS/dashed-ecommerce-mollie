@@ -20,6 +20,13 @@ class DashedEcommerceMollieServiceProvider extends PackageServiceProvider
             $schedule->command(SyncMolliePaymentMethodsCommand::class)->daily();
         });
 
+        // Register the Mollie webhook event_id extractor so the
+        // EnsureWebhookIdempotency middleware can deduplicate retries.
+        app(\Dashed\DashedCore\Webhooks\WebhookEventIdResolver::class)->extend(
+            'mollie',
+            fn (\Illuminate\Http\Request $request) => (string) $request->input('id'),
+        );
+
         cms()->registerSetting(
             key: 'mollie_active',
             type: 'bool',
