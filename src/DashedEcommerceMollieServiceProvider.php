@@ -27,6 +27,16 @@ class DashedEcommerceMollieServiceProvider extends PackageServiceProvider
             fn (\Illuminate\Http\Request $request) => (string) $request->input('id'),
         );
 
+        cms()->registerIntegration([
+            'slug' => 'mollie',
+            'label' => 'Mollie',
+            'icon' => 'heroicon-o-credit-card',
+            'category' => 'payment',
+            'settings_page' => \Dashed\DashedEcommerceMollie\Filament\Pages\Settings\MollieSettingsPage::class,
+            'health_check' => [\Dashed\DashedEcommerceMollie\Classes\Mollie::class, 'healthCheck'],
+            'package' => 'dashed-ecommerce-mollie',
+        ]);
+
         cms()->registerSetting(
             key: 'mollie_active',
             type: 'bool',
