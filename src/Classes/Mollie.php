@@ -18,6 +18,28 @@ use RalphJSmit\Filament\MediaLibrary\Models\MediaLibraryFolder;
 
 class Mollie
 {
+    /**
+     * Lightweight health check for the IntegrationsDashboard. Does NOT call
+     * the Mollie API on every dashboard render (that would create test
+     * payments) — it inspects the local config + last-error Customsetting.
+     */
+    public static function healthCheck(?string $siteId = null): \Dashed\DashedCore\Integrations\IntegrationHealth
+    {
+        $site = Sites::get($siteId);
+        $apiKey = Customsetting::get('mollie_api_key', $site['id']);
+
+        if (empty($apiKey)) {
+            return \Dashed\DashedCore\Integrations\IntegrationHealth::misconfigured('API key ontbreekt');
+        }
+
+        $error = Customsetting::get('mollie_connection_error', $site['id']);
+        if (! empty($error)) {
+            return \Dashed\DashedCore\Integrations\IntegrationHealth::failing((string) $error);
+        }
+
+        return \Dashed\DashedCore\Integrations\IntegrationHealth::ok();
+    }
+
     public static function isConnected($siteId = null): bool
     {
         $site = Sites::get($siteId);
