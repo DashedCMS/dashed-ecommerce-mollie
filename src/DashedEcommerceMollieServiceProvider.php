@@ -20,6 +20,21 @@ class DashedEcommerceMollieServiceProvider extends PackageServiceProvider
             $schedule->command(SyncMolliePaymentMethodsCommand::class)->daily();
         });
 
+        cms()->registerSetting(
+            key: 'mollie_active',
+            type: 'bool',
+            default: false,
+            package: 'dashed-ecommerce-mollie',
+            label: 'Mollie actief',
+        );
+        cms()->registerSetting(
+            key: 'mollie_api_key',
+            type: 'string',
+            default: null,
+            package: 'dashed-ecommerce-mollie',
+            label: 'Mollie API key',
+        );
+
         cms()->registerSettingsDocs(
             page: \Dashed\DashedEcommerceMollie\Filament\Pages\Settings\MollieSettingsPage::class,
             title: 'Mollie instellingen',
