@@ -22,10 +22,12 @@ class DashedEcommerceMollieServiceProvider extends PackageServiceProvider
 
         // Register the Mollie webhook event_id extractor so the
         // EnsureWebhookIdempotency middleware can deduplicate retries.
-        app(\Dashed\DashedCore\Webhooks\WebhookEventIdResolver::class)->extend(
-            'mollie',
-            fn (\Illuminate\Http\Request $request) => (string) $request->input('id'),
-        );
+        if (class_exists(\Dashed\DashedCore\Webhooks\WebhookEventIdResolver::class)) {
+            app(\Dashed\DashedCore\Webhooks\WebhookEventIdResolver::class)->extend(
+                'mollie',
+                fn (\Illuminate\Http\Request $request) => (string) $request->input('id'),
+            );
+        }
 
         if (method_exists(cms(), 'registerIntegration')) {
             cms()->registerIntegration([
