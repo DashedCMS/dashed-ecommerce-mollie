@@ -14,10 +14,12 @@ use Dashed\DashedCore\Models\Customsetting;
 use Filament\Infolists\Components\TextEntry;
 use Dashed\DashedEcommerceMollie\Classes\Mollie;
 use Dashed\DashedCore\Traits\HasSettingsPermission;
+use Dashed\DashedCore\Filament\Concerns\ShowsIntegrationHealthBanner;
 
 class MollieSettingsPage extends Page
 {
     use HasSettingsPermission;
+    use ShowsIntegrationHealthBanner;
 
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $title = 'Mollie';
