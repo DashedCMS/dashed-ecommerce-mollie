@@ -63,13 +63,13 @@ class MollieSettingsPage extends Page
                         'lg' => 2,
                     ]),
                 TextInput::make("mollie_partner_id_{$site['id']}")
-                    ->label('Mollie Partner ID')
+                    ->label(__('Mollie Partner ID'))
                     ->maxLength(255),
                 TextInput::make("mollie_api_key_{$site['id']}")
-                    ->label('Mollie API key')
+                    ->label(__('Mollie API key'))
                     ->maxLength(255),
                 Toggle::make("mollie_test_mode_{$site['id']}")
-                    ->label('Testmodus activeren'),
+                    ->label(__('Testmodus activeren')),
             ];
 
             $tabs[] = Tab::make($site['id'])
@@ -103,7 +103,7 @@ class MollieSettingsPage extends Page
         }
 
         Notification::make()
-            ->title('De Mollie instellingen zijn opgeslagen')
+            ->title(__('De Mollie instellingen zijn opgeslagen'))
             ->success()
             ->send();
 
