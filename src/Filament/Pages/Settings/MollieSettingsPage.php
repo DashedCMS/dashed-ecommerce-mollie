@@ -35,6 +35,7 @@ class MollieSettingsPage extends Page
             $formData["mollie_partner_id_{$site['id']}"] = Customsetting::get('mollie_partner_id', $site['id']);
             $formData["mollie_api_key_{$site['id']}"] = Customsetting::get('mollie_api_key', $site['id']);
             $formData["mollie_test_mode_{$site['id']}"] = Customsetting::get('mollie_test_mode', $site['id'], false) ? true : false;
+            $formData["mollie_send_order_lines_{$site['id']}"] = Customsetting::get('mollie_send_order_lines', $site['id'], false) ? true : false;
             $formData["mollie_connected_{$site['id']}"] = Customsetting::get('mollie_connected', $site['id']);
             $formData["mollie_connection_error_{$site['id']}"] = Customsetting::get('mollie_connection_error', $site['id']);
         }
@@ -70,6 +71,9 @@ class MollieSettingsPage extends Page
                     ->maxLength(255),
                 Toggle::make("mollie_test_mode_{$site['id']}")
                     ->label(__('Testmodus activeren')),
+                Toggle::make("mollie_send_order_lines_{$site['id']}")
+                    ->label(__('Orderregels meesturen'))
+                    ->helperText(__('Verplicht voor achteraf betalen (Klarna, in3, Riverty, Billie). De orderregels worden alleen meegestuurd als ze exact optellen tot het betaalbedrag.')),
             ];
 
             $tabs[] = Tab::make($site['id'])
@@ -95,6 +99,7 @@ class MollieSettingsPage extends Page
             Customsetting::set('mollie_partner_id', $this->form->getState()["mollie_partner_id_{$site['id']}"], $site['id']);
             Customsetting::set('mollie_api_key', $this->form->getState()["mollie_api_key_{$site['id']}"], $site['id']);
             Customsetting::set('mollie_test_mode', $this->form->getState()["mollie_test_mode_{$site['id']}"], $site['id']);
+            Customsetting::set('mollie_send_order_lines', $this->form->getState()["mollie_send_order_lines_{$site['id']}"], $site['id']);
             Customsetting::set('mollie_connected', Mollie::isConnected($site['id']), $site['id']);
 
             if (Customsetting::get('mollie_connected', $site['id'])) {

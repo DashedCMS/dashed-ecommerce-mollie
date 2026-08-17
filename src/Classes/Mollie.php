@@ -10,6 +10,7 @@ use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedEcommerceCore\Classes\Countries;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedEcommerceCore\Models\OrderPayment;
+use Dashed\DashedEcommerceCore\Models\OrderProduct;
 use Dashed\DashedEcommerceCore\Classes\ShoppingCart;
 use Dashed\DashedEcommerceCore\Models\PaymentMethod;
 use Dashed\DashedEcommerceCore\Classes\PaymentMethods;
@@ -177,7 +178,192 @@ class Mollie
             $paymentData['billingAddress'] = $billingAddress;
         }
 
+        if (self::shouldSendOrderLines($orderPayment)) {
+            $lines = self::getPaymentLines($orderPayment);
+
+            if ($lines !== null) {
+                $paymentData['lines'] = $lines;
+            }
+        }
+
         return $paymentData;
+    }
+
+    public static function shouldSendOrderLines(OrderPayment $orderPayment): bool
+    {
+        $siteId = $orderPayment->order?->site_id;
+
+        return (bool) Customsetting::get('mollie_send_order_lines', $siteId ? (string) $siteId : null);
+    }
+
+    /**
+     * Orderregels voor de Mollie Payments API. Methodes als Klarna, in3,
+     * Riverty en Billie weigeren een betaling zonder `lines`.
+     *
+     * Mollie eist dat de som van alle `totalAmount` exact gelijk is aan het
+     * betaalbedrag. Lukt dat niet, dan is een betaling zonder regels beter dan
+     * een betaling met regels die niet kloppen: dan geeft deze methode null
+     * terug en blijft de payload zoals hij was.
+     *
+     * @return array<int, array<string, mixed>>|null
+     */
+    protected static function getPaymentLines(OrderPayment $orderPayment): ?array
+    {
+        $order = $orderPayment->order;
+
+        if (! $order) {
+            return null;
+        }
+
+        $targetCents = (int) round(((float) $orderPayment->amount) * 100);
+
+        if ($targetCents <= 0) {
+            return null;
+        }
+
+        $lines = [];
+        $subtotalCents = 0;
+
+        foreach ($order->orderProducts()->get() as $orderProduct) {
+            $totalCents = (int) round(((float) $orderProduct->price) * 100);
+
+            // Een creditregel (negatief bedrag) maakt de hele set onbruikbaar:
+            // Mollie accepteert binnen een gewone betaling geen regel onder nul.
+            if ($totalCents < 0) {
+                return null;
+            }
+
+            $lines[] = [
+                'totalCents' => $totalCents,
+                'quantity' => max(1, (int) $orderProduct->quantity),
+                'vatRate' => round((float) ($orderProduct->vat_rate ?? 0), 2),
+                'description' => self::getLineDescription($orderProduct),
+                'type' => self::getLineType($orderProduct),
+                'sku' => self::getLineSku($orderProduct),
+            ];
+
+            $subtotalCents += $totalCents;
+        }
+
+        if (! $lines || $subtotalCents <= 0) {
+            return null;
+        }
+
+        // De korting staat op de order en niet op de regels, dus het verschil
+        // tussen de regels en het betaalbedrag wordt naar rato verdeeld. Een
+        // betaalbedrag boven het regeltotaal (een deelbetaling van een groter
+        // bedrag bestaat niet, maar een aanbetaling wel) is niet te verdelen.
+        $differenceCents = $subtotalCents - $targetCents;
+
+        if ($differenceCents < 0) {
+            return null;
+        }
+
+        $remainingCents = $differenceCents;
+
+        foreach ($lines as $index => $line) {
+            if ($remainingCents <= 0) {
+                break;
+            }
+
+            // Naar beneden afronden, zodat de verdeling het verschil nooit
+            // overschrijdt; de afrondingscenten gaan in de ronde hierna.
+            $share = (int) floor($differenceCents * $line['totalCents'] / $subtotalCents);
+            $share = min($share, $line['totalCents'], $remainingCents);
+
+            $lines[$index]['totalCents'] -= $share;
+            $remainingCents -= $share;
+        }
+
+        foreach ($lines as $index => $line) {
+            if ($remainingCents <= 0) {
+                break;
+            }
+
+            $share = min($lines[$index]['totalCents'], $remainingCents);
+
+            $lines[$index]['totalCents'] -= $share;
+            $remainingCents -= $share;
+        }
+
+        if ($remainingCents > 0) {
+            return null;
+        }
+
+        $paymentLines = [];
+
+        foreach ($lines as $line) {
+            $quantity = $line['quantity'];
+            $totalCents = $line['totalCents'];
+
+            // Mollie rekent totalAmount = unitPrice * quantity - discountAmount.
+            // De eenheidsprijs wordt daarom naar boven afgerond en wat er te
+            // veel in zit gaat als korting op de regel mee.
+            $unitPriceCents = (int) ceil($totalCents / $quantity);
+            $discountCents = ($unitPriceCents * $quantity) - $totalCents;
+
+            // Mollie wil altijd btw-inclusieve bedragen met
+            // vatAmount = totalAmount * vatRate / (100 + vatRate).
+            $vatRate = $line['vatRate'];
+            $vatCents = $totalCents - (int) round($totalCents * 100 / (100 + $vatRate));
+
+            $paymentLine = [
+                'description' => $line['description'],
+                'quantity' => $quantity,
+                'unitPrice' => self::formatAmount($unitPriceCents),
+                'totalAmount' => self::formatAmount($totalCents),
+                'vatRate' => number_format($vatRate, 2, '.', ''),
+                'vatAmount' => self::formatAmount($vatCents),
+                'type' => $line['type'],
+            ];
+
+            if ($discountCents > 0) {
+                $paymentLine['discountAmount'] = self::formatAmount($discountCents);
+            }
+
+            if ($line['sku']) {
+                $paymentLine['sku'] = $line['sku'];
+            }
+
+            $paymentLines[] = $paymentLine;
+        }
+
+        return $paymentLines;
+    }
+
+    protected static function formatAmount(int $cents): array
+    {
+        return [
+            'currency' => 'EUR',
+            'value' => number_format($cents / 100, 2, '.', ''),
+        ];
+    }
+
+    protected static function getLineDescription(OrderProduct $orderProduct): string
+    {
+        $description = $orderProduct->name ?: ($orderProduct->product->name ?? '');
+
+        return mb_substr(trim($description) ?: __('Product'), 0, 255);
+    }
+
+    protected static function getLineType(OrderProduct $orderProduct): string
+    {
+        return match ($orderProduct->sku) {
+            'shipping_costs' => 'shipping_fee',
+            'payment_costs', 'product_costs' => 'surcharge',
+            default => 'physical',
+        };
+    }
+
+    protected static function getLineSku(OrderProduct $orderProduct): ?string
+    {
+        $sku = (string) $orderProduct->sku;
+
+        if (! $sku || in_array($sku, ['shipping_costs', 'payment_costs', 'product_costs'], true)) {
+            return null;
+        }
+
+        return mb_strlen($sku) > 64 ? null : $sku;
     }
 
     public static function getOrderStatus(OrderPayment $orderPayment): string
