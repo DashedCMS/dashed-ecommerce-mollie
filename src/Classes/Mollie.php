@@ -82,7 +82,11 @@ class Mollie
             'mollie.key' => Customsetting::get('mollie_api_key', $site['id']),
         ]);
 
-        $allPaymentMethods = \Mollie\Laravel\Facades\Mollie::api()->methods->allActive()->getArrayCopy();
+        // mollie-api-php v3 (laravel-mollie v4) heeft allActive() vervangen door allEnabled().
+        $methods = \Mollie\Laravel\Facades\Mollie::api()->methods;
+        $allPaymentMethods = method_exists($methods, 'allEnabled')
+            ? $methods->allEnabled()->getArrayCopy()
+            : $methods->allActive()->getArrayCopy();
 
         foreach ($allPaymentMethods as $allPaymentMethod) {
             if (PaymentMethod::where('psp', 'mollie')->where('psp_id', $allPaymentMethod->id)->exists()) {
