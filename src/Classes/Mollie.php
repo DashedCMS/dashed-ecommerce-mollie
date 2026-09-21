@@ -142,9 +142,13 @@ class Mollie
             'mollie.key' => Customsetting::get('mollie_api_key'),
         ]);
 
-        $payment = \Mollie\Laravel\Facades\Mollie::api()->payments->create(
-            self::getPaymentData($orderPayment)
-        );
+        $paymentData = self::getPaymentData($orderPayment);
+        // Bestaat pas vanaf ec-core v4.134.0; dit pakket vereist ec-core niet.
+        if (method_exists($orderPayment, 'recordPspRequest')) {
+            $orderPayment->recordPspRequest($paymentData);
+        }
+
+        $payment = \Mollie\Laravel\Facades\Mollie::api()->payments->create($paymentData);
 
         $orderPayment->psp_id = $payment->id;
         $orderPayment->save();
