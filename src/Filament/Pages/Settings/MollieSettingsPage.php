@@ -18,6 +18,7 @@ use Dashed\DashedCore\Filament\Concerns\ShowsIntegrationHealthBanner;
 
 class MollieSettingsPage extends Page
 {
+    use \Dashed\DashedCore\Filament\Concerns\TranslatesPageLabels;
     use HasSettingsPermission;
     use ShowsIntegrationHealthBanner;
 
