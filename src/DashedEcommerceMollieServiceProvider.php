@@ -108,6 +108,7 @@ MARKDOWN,
 
         $package
             ->name('dashed-ecommerce-mollie')
+            ->hasTranslations()
             ->hasCommands([
                 SyncMolliePaymentMethodsCommand::class,
             ]);
