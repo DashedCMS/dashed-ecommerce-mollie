@@ -3,6 +3,7 @@
     "Link Mollie aan je webshop": "Connect Mollie to your webshop",
     "Mollie": "Mollie",
     "Mollie API key": "Mollie API key",
+    "Mollie gebruikt een test-API-sleutel op productie (site :site). Er komt geen enkele betaling echt binnen.": "Mollie uses a test API key in production (site :site). No payment actually comes in.",
     "Mollie Partner ID": "Mollie Partner ID",
     "Orderregels meesturen": "Include order lines",
     "Product": "Product",

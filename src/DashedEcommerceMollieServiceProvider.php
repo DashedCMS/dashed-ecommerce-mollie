@@ -29,6 +29,31 @@ class DashedEcommerceMollieServiceProvider extends PackageServiceProvider
             );
         }
 
+        // Systeembalk: een test-sleutel op productie betekent dat er geen
+        // enkele betaling echt binnenkomt.
+        if (class_exists(\Dashed\DashedCore\Classes\SystemHealth::class)) {
+            \Dashed\DashedCore\Classes\SystemHealth::extend(function (): array {
+                if (! app()->isProduction()) {
+                    return [];
+                }
+
+                $items = [];
+                foreach (\Dashed\DashedCore\Classes\Sites::getSites() as $site) {
+                    $key = (string) \Dashed\DashedCore\Models\Customsetting::get('mollie_api_key', $site['id']);
+                    if (str_starts_with($key, 'test_')) {
+                        $items[] = [
+                            'key' => 'mollie_test_mode_'.$site['id'],
+                            'label' => 'Mollie',
+                            'status' => 'danger',
+                            'detail' => __('Mollie gebruikt een test-API-sleutel op productie (site :site). Er komt geen enkele betaling echt binnen.', ['site' => $site['name'] ?? $site['id']]),
+                        ];
+                    }
+                }
+
+                return $items;
+            }, 'mollie');
+        }
+
         if (method_exists(cms(), 'registerIntegration')) {
             cms()->registerIntegration([
                 'slug' => 'mollie',
