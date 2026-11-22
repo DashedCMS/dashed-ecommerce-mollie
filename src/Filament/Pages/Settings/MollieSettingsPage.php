@@ -3,21 +3,21 @@
 namespace Dashed\DashedEcommerceMollie\Filament\Pages\Settings;
 
 use Filament\Pages\Page;
-use Illuminate\Support\HtmlString;
-use Filament\Forms\Components\Textarea;
-use Filament\Schemas\Components\Section;
-use Dashed\DashedEcommerceCore\Models\PaymentMethod;
 use Filament\Schemas\Schema;
+use Illuminate\Support\HtmlString;
 use Dashed\DashedCore\Classes\Sites;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Tabs;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
 use Dashed\DashedCore\Models\Customsetting;
 use Filament\Infolists\Components\TextEntry;
 use Dashed\DashedEcommerceMollie\Classes\Mollie;
 use Dashed\DashedCore\Traits\HasSettingsPermission;
+use Dashed\DashedEcommerceCore\Models\PaymentMethod;
 use Dashed\DashedCore\Filament\Concerns\ShowsIntegrationHealthBanner;
 
 class MollieSettingsPage extends Page

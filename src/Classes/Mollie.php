@@ -3,9 +3,9 @@
 namespace Dashed\DashedEcommerceMollie\Classes;
 
 use Exception;
+use Dashed\DashedCore\Classes\Sites;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
-use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedCore\Classes\Locales;
 use Illuminate\Support\Facades\Storage;
 use Dashed\DashedCore\Models\Customsetting;
