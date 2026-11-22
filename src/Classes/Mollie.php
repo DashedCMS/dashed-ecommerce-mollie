@@ -3,6 +3,8 @@
 namespace Dashed\DashedEcommerceMollie\Classes;
 
 use Exception;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 use Dashed\DashedCore\Classes\Sites;
 use Dashed\DashedCore\Classes\Locales;
 use Illuminate\Support\Facades\Storage;
@@ -82,10 +84,14 @@ class Mollie
         ]);
 
         // mollie-api-php v3 (laravel-mollie v4) heeft allActive() vervangen door allEnabled().
+        // Mollie laat wallets (Apple Pay) alleen in deze lijst zien als je
+        // ze expliciet opvraagt; zonder includeWallets kwam Apple Pay nooit
+        // als betaalmethode in de webshop terecht.
         $methods = \Mollie\Laravel\Facades\Mollie::api()->methods;
+        // v3 wil een array, v2 een kommagescheiden string.
         $allPaymentMethods = method_exists($methods, 'allEnabled')
-            ? $methods->allEnabled()->getArrayCopy()
-            : $methods->allActive()->getArrayCopy();
+            ? $methods->allEnabled(['includeWallets' => ['applepay']])->getArrayCopy()
+            : $methods->allActive(['includeWallets' => 'applepay'])->getArrayCopy();
 
         foreach ($allPaymentMethods as $allPaymentMethod) {
             if (PaymentMethod::where('psp', 'mollie')->where('psp_id', $allPaymentMethod->id)->exists()) {
@@ -122,6 +128,40 @@ class Mollie
 
             PaymentMethods::notifyAdminsOfNewPaymentMethod($paymentMethod);
         }
+    }
+
+    public const APPLE_PAY_DOMAIN_ASSOCIATION_URL = 'https://www.mollie.com/.well-known/apple-developer-merchantid-domain-association';
+
+    /**
+     * Inhoud van het Apple Pay-domeinverificatiebestand. Een handmatig
+     * geplakte versie gaat voor; anders halen we het bestand van Mollie op
+     * (dat wisselt af en toe) en bewaren het een dag.
+     */
+    public static function applePayDomainAssociation(): ?string
+    {
+        $override = trim((string) Customsetting::get('mollie_apple_pay_domain_association', Sites::getActive()));
+        if ($override !== '') {
+            return $override;
+        }
+
+        $cached = Cache::get('mollie-apple-pay-domain-association');
+        if (filled($cached)) {
+            return $cached;
+        }
+
+        try {
+            $response = Http::timeout(5)->get(self::APPLE_PAY_DOMAIN_ASSOCIATION_URL);
+        } catch (Exception) {
+            return null;
+        }
+
+        if (! $response->successful() || blank($response->body())) {
+            return null;
+        }
+
+        Cache::put('mollie-apple-pay-domain-association', $response->body(), now()->addDay());
+
+        return $response->body();
     }
 
     public static function startTransaction(OrderPayment $orderPayment): array

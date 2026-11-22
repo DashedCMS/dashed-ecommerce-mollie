@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedEcommerceMollie;
 
+use Illuminate\Support\Facades\Route;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
 use Dashed\DashedEcommerceMollie\Classes\Mollie;
@@ -19,6 +20,16 @@ class DashedEcommerceMollieServiceProvider extends PackageServiceProvider
             $schedule = app(Schedule::class);
             $schedule->command(SyncMolliePaymentMethodsCommand::class)->daily();
         });
+
+        // Apple Pay: Apple controleert het domein via dit bestand. Het moet
+        // als platte tekst op exact deze URL staan, zonder redirect.
+        Route::get('/.well-known/apple-developer-merchantid-domain-association', function () {
+            $content = Mollie::applePayDomainAssociation();
+
+            abort_if(blank($content), 404);
+
+            return response($content, 200, ['Content-Type' => 'text/plain']);
+        })->name('dashed.mollie.apple-pay-domain-association');
 
         // Register the Mollie webhook event_id extractor so the
         // EnsureWebhookIdempotency middleware can deduplicate retries.
